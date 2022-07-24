@@ -1,3 +1,6 @@
+version:0.2
+
+
 phases:
   pre_build:
     commands:
@@ -5,8 +8,8 @@ phases:
       -echo Logging in to Amazon ECR...
       -aws --version
       -$ (aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
-      -REPOSITORY_URI=REGISTRY_URI
-      -COMMIT HASH=
+      -REPOSITORY_URI=public.ecr.aws/s8g5a9s1/samplejava
+      -COMMIT HASH=$(echo $CODEBUILD_RESOLVED_SORCE-VERSION | cut -c 1-7)
       -IMAGE_TAG=$(echo $CODEBUILD_BUILD_id | awk -F":" '{print $2}')
   build:
    commands:
