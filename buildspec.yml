@@ -1,31 +1,7 @@
 version:0.2
 
 
-phases:
-  pre_build:
-    commands:
-      -mvn clean install
-      -echo Logging in to Amazon ECR...
-      -aws --version
-      -$ (aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
-      -REPOSITORY_URI=public.ecr.aws/s8g5a9s1/samplejava
-      -COMMIT HASH=$(echo $CODEBUILD_RESOLVED_SORCE-VERSION | cut -c 1-7)
-      -IMAGE_TAG=$(echo $CODEBUILD_BUILD_id | awk -F":" '{print $2}')
-  build:
-   commands:
-     -echo Build started on `date`
-     -echo Building the Docker image...
-     -docker build -t $REPOSITORY_URI:LATEST .
-     -docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
-  post_build:
-     -echo Build started on `date`
-     -echo Building the Docker image...
-     -docker push $REPOSITORY_URI:LATEST .
-     -docker push $REPOSITORY_URI:$IMAGE_TAG
-     -echo Writing image definition file...
-     printf '[{"name":"order-service","imageUri":"&s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinition.json
-     -cat imagedefinition.json
-artifacts:
-  files:
-    -imagedefinition.json
-    -target/order-service.jar
+aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/s8g5a9s1
+docker build -t samplejava .
+docker build -t samplejava .
+docker push public.ecr.aws/s8g5a9s1/samplejava:latest
